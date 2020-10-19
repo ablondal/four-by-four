@@ -7,4 +7,4 @@ https://packaging.python.org/guides/installing-using-pip-and-virtual-environment
 
 This project uses WebGL and Flask. The eventual goal is Heroku Deployment.
 
-I plan on deploying using Gunicorn. Install if you are running Unix and want to test deployment
+Plan is deployment using Gunicorn. Install if you are running Unix and want to test deployment
