@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Quad-Tac-Toe</title>
+
+        <!-- Vertex shader script -->
+        <script id="vertex-shader" type="x-shader/x-vertex">
+            // Vertex Shaders require a position input/"attribute"
+            attribute vec4 vPosition;
+            attribute vec4 vColor;
+            attribute vec3 vNormal;
+
+            uniform mat4 uNormalMatrix;
+            uniform mat4 uModelViewMatrix;
+            uniform mat4 uProjectionMatrix;
+
+            varying highp vec4 varColor;
+            varying highp vec3 vLighting;
+
+            void main()
+            {
+                // gl_Position is a build-in "varying"
+                // Set its value with the vertex shader
+                // Simplest shader just copies position over
+
+                gl_Position = uProjectionMatrix * uModelViewMatrix * vPosition;
+                varColor = vColor;
+
+                // Apply lighting
+
+                highp vec3 ambientLight = vec3(0.3, 0.3, 0.3);
+                highp vec3 directionalLightColor = vec3(1, 1, 1);
+                highp vec3 directionalVector = normalize(vec3(0.85, 0.8, 0.75));
+
+                highp vec4 transformedNormal = uNormalMatrix * vec4(vNormal, 1.0);
+                // highp vec4 transformedNormal = uNormalMatrix * vec4(1.0, 0.0, 0.0, 1.0);
+            
+                highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
+                vLighting = ambientLight + (directionalLightColor * directional);
+            }
+        </script>
+
+        <!-- Fragment shader resource -->
+        <script id="fragment-shader" type="x-shader/x-fragment">
+            // Set default precision for floats
+            // Required, we need a precision
+            // Choices are lowp and mediump
+            precision mediump float;
+
+            varying highp vec4 varColor;
+            varying highp vec3 vLighting;
+
+            void main()
+            {
+                // gl_FragColor is a built-in fragment shader output
+                // Usually should be set, but not totally Required
+                gl_FragColor = vec4(varColor.rgb * vLighting, varColor.a);
+            }
+        </script>
+
+        <script type="text/javascript" src="/static/src/App.js"></script>
+        <script type="text/javascript" src="/static/util/webgl-utils.js"></script>
+        <script type="text/javascript" src="/static/util/shader-utils.js"></script>
+        <script type="text/javascript" src="/static/util/gl-matrix-min.js"></script>
+        <script type="text/javascript" src="/static/src/rendering.js"></script>
+        <script type="text/javascript" src="/static/src/controls.js"></script>
+
+        <link rel="stylesheet" href="/static/src/main.css">
+    </head>
+
+    <body>
+        <!-- Draw the canvas. This is what WebGL will render to -->
+        <canvas id="gl-canvas" width="512" height="512">
+            Oops ... Sorry, your browser doesn't support HTML5 canvas :(
+        </canvas>
+        <span>
+            Enter the index of the cube to change, then press the button
+        </span><br>
+        <input type="radio" id="red" name="color" value="red" checked="checked">
+        <label for="red">Red</label><br>
+        <input type="radio" id="blue" name="color" value="blue">
+        <label for="blue">Blue</label><br>
+        <input type="number" id="numchange">
+        <button id="changebutton">Color</button>
+    </body>
+</html>
