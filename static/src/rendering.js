@@ -92,6 +92,7 @@ function initRender(){
         -1.0,  1.0,  1.0,
         -1.0,  1.0, -1.0,
     ];
+    // s_vertices = s_vertices.map(x => 0.1*x);
 
     const s_normals = [
         0,0,1,
