@@ -39,7 +39,7 @@ function initRender(){
     // Configure WebGL
 
     // Light gray colour to make things visible
-    gl.clearColor(0.9, 0.9, 0.9, 1.0);
+    gl.clearColor(1, 1, 1, 1.0);
 
     // Depth stuff for 3d rendering
     gl.clearDepth(1.0);
