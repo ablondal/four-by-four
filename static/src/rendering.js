@@ -11,6 +11,9 @@ var projMatAddr, modViewMatAddr, normMatAddr;
 // Projection matrix
 var projectionMatrix;
 
+// Picking projection matrix
+var pickingProjectionMatrix
+
 // Rotation angle
 var rotAngle;
 
@@ -26,12 +29,27 @@ var data;
 // Colored Cube Data
 var col;
 
+// mouseX and mouseY are in CSS display space relative to canvas
+let mouseX = -1;
+let mouseY = -1;
+
+// Field of view
+let fieldOfView;
+
+
 function initRender(){
     canvas = document.getElementById("gl-canvas");
     gl = WebGLUtils.setupWebGL(canvas);
     if (!gl) {
         alert("WebGL isn't available");
     }
+
+    gl.canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+        console.log(mouseX, mouseY)
+    });
 
     // Optimize gl-matrix for modern web browsers
     // glMatrix.setMatrixArrayType(Array);
@@ -192,8 +210,8 @@ function initRender(){
 
     // Create perspective matrix
 
-    const fieldOfView = 45 * Math.PI / 180;
-    const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+    fieldOfView = 45 * Math.PI / 180;
+    const aspect = (gl.canvas.clientWidth-9) / gl.canvas.clientHeight;
     const zNear = 0.1;
     const zFar = 100.0;
     projectionMatrix = glMatrix.mat4.create();
@@ -205,6 +223,17 @@ function initRender(){
         zNear,
         zFar
     );
+
+    pickingProjectionMatrix = glMatrix.mat4.create();
+
+    glMatrix.mat4.perspective(
+        pickingProjectionMatrix,
+        // fieldOfView,
+        fieldOfView*(9.0/(gl.canvas.clientWidth-9)),
+        1,
+        zNear,
+        zFar
+    )
 
     // Load data into GPU data buffers
     // Copy vertex array into one buffer
@@ -353,8 +382,43 @@ function render(now) {
     )
 
     // Draw data from buffers currently associated with shader vars
-    
+    gl.viewport(0, 0, 512, 512);
+    // console.log("drawing first time");
     gl.drawElements(gl.TRIANGLES, 36*64, gl.UNSIGNED_SHORT, 0);
+
+    // Draw picking
+    gl.viewport(512,0,9,9);
+
+    const framePickMat = glMatrix.mat4.create();
+
+    glMatrix.mat4.rotate(
+        framePickMat,
+        pickingProjectionMatrix,
+        (mouseY-256)*(fieldOfView/2),
+        [1,0,0]
+    )
+
+    // glMatrix.mat4.frustum(
+    //     pickingProjectionMatrix,
+    //     mouseX-4,
+    //     mouseX+5,
+    //     mouseY,
+    //     subBottom + subHeight,
+    //     near,
+    //     far);
+
+    gl.uniformMatrix4fv(
+        projMatAddr,
+        false,
+        framePickMat
+    );
+    // console.log("drawing second time");
+
+    gl.drawElements(gl.TRIANGLES, 36*64, gl.UNSIGNED_SHORT, 0);
+}
+
+function renderPick(){
+
 }
 
 function changeColor(index, val){
