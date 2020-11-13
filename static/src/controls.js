@@ -80,3 +80,12 @@ function handleButtonPress(){
         picker.value = (val + 1.0) % 64;
     }
 }
+
+function clickSquare(val){
+    var col = (document.getElementById("red").checked ? 1 : 0)
+    if (val < 64 && val >= 0){
+        changeColor(val, col);
+        document.getElementById("red").checked = !col;
+        document.getElementById("blue").checked = col;
+    }
+}

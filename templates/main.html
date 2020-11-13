@@ -58,6 +58,46 @@
             }
         </script>
 
+        <!-- Vertex shader script for picking -->
+        <script id="pick-vertex-shader" type="x-shader/x-vertex">
+            // Vertex Shaders require a position input/"attribute"
+            attribute vec4 vPosition;
+            attribute float vPickColor;
+
+            uniform mat4 uProjectionMatrix;
+            uniform mat4 uModelViewMatrix;
+
+            varying float vPickCol;
+
+            void main()
+            {
+                // gl_Position is a build-in "varying"
+                // Set its value with the vertex shader
+                // Simplest shader just copies position over
+
+                gl_Position = uProjectionMatrix * uModelViewMatrix * vPosition;
+                vPickCol = vPickColor;
+            }
+        </script>
+
+        <!-- Fragment shader resource -->
+        <script id="pick-fragment-shader" type="x-shader/x-fragment">
+            // Set default precision for floats
+            // Required, we need a precision
+            // Choices are lowp and mediumps
+            precision mediump float;
+
+            varying float vPickCol;
+
+            void main()
+            {
+                // gl_FragColor is a built-in fragment shader output
+                // Usually should be set, but not totally Required
+                float aCol = vPickCol / 128.0;
+                gl_FragColor = vec4(aCol,aCol,aCol,1.0);
+            }
+        </script>
+
         <script type="text/javascript" src="/static/src/App.js"></script>
         <script type="text/javascript" src="/static/util/webgl-utils.js"></script>
         <script type="text/javascript" src="/static/util/shader-utils.js"></script>
@@ -70,7 +110,7 @@
 
     <body>
         <!-- Draw the canvas. This is what WebGL will render to -->
-        <canvas id="gl-canvas" width="521" height="512">
+        <canvas id="gl-canvas" width="512" height="512">
             Oops ... Sorry, your browser doesn't support HTML5 canvas :(
         </canvas><br>
         <span>
