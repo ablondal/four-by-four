@@ -1,0 +1,31 @@
+canvas {
+    cursor: pointer;
+}
+
+.canvas {
+    margin: auto;
+    align-items: center;
+    text-align: center;
+}
+
+body{
+  background-color: #2f4250;
+}
+
+.changeColour{
+  margin: auto;
+  align-items: center;
+  text-align: center;
+  color: DarkGray;
+  background-color:#2f4250;
+}
+
+.Rule{
+  margin: auto;
+  align-items: center;
+  text-align: center;
+  color: DarkGray;
+  background-color: #2f4250;
+}
+
+
