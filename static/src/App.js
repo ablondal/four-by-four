@@ -8,6 +8,9 @@ window.onload = function init() {
     // Set up WebGL Rendering Context
     initRender();
 
+    // Initialize gamestate
+    initGame();
+
     // Run WebGL
     beginRendering();
 }

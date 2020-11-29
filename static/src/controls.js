@@ -62,6 +62,7 @@ function updateRotation(tick){
     if (keypressed['D'] || keypressed[83]){
         rotx -= tick;
     }
+    rotx = Math.min(Math.PI/4, Math.max(-Math.PI/4, rotx));
 }
 
 function getrot(){
@@ -82,10 +83,5 @@ function handleButtonPress(){
 }
 
 function clickSquare(val){
-    var col = (document.getElementById("red").checked ? 1 : 0)
-    if (val < 64 && val >= 0){
-        changeColor(val, col);
-        document.getElementById("red").checked = !col;
-        document.getElementById("blue").checked = col;
-    }
+    takeTurn(val);
 }

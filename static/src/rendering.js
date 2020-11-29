@@ -585,25 +585,25 @@ function render(now) {
     gl.drawElements(gl.TRIANGLES, 36*64, gl.UNSIGNED_SHORT, 0);
 
     // Testing
-    gl.useProgram(pick_program);
-    // gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuff);
-    gl.viewport(384,384,128,128);
-    // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    // gl.useProgram(pick_program);
+    // // gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuff);
+    // gl.viewport(384,384,128,128);
+    // // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    gl.uniformMatrix4fv(
-        pickProjAddr,
-        // projMatAddr,
-        false,
-        pickingProjectionMatrix
-    );
-    gl.uniformMatrix4fv(
-        pickModViewAddr,
-        // modViewMatAddr,
-        false,
-        pickModelViewMatrix
-    )
-    // Draw to the 1x1 texture
-    gl.drawElements(gl.TRIANGLES, 36*64, gl.UNSIGNED_SHORT, 0);
+    // gl.uniformMatrix4fv(
+    //     pickProjAddr,
+    //     // projMatAddr,
+    //     false,
+    //     pickingProjectionMatrix
+    // );
+    // gl.uniformMatrix4fv(
+    //     pickModViewAddr,
+    //     // modViewMatAddr,
+    //     false,
+    //     pickModelViewMatrix
+    // )
+    // // Draw to the 1x1 texture
+    // gl.drawElements(gl.TRIANGLES, 36*64, gl.UNSIGNED_SHORT, 0);
 }
 
 function changeColor(index, val){
