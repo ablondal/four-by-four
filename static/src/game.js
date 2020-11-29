@@ -24,9 +24,11 @@ function takeTurn(index) {
             // Move is valid and available
             game.boardState[index] = game.color;
             changeColor(index, game.color);
+            game.turn = 0;
             make_move().then((response) => {
                 console.log(response);
                 game.boardState = response.boardState.map(x => x);
+                game.turn = 1;
                 if (response.move[0]<64) {
                     changeColor(response.move[0], response.move[1]);
                 }

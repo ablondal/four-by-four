@@ -1,4 +1,5 @@
 from flask import Flask, escape, request, render_template, send_from_directory
+from time import sleep
 
 app = Flask(__name__,
     static_folder='static/')
@@ -14,6 +15,7 @@ def make_move():
         if state[i] == 0:
             state[i] = -1
             break;
+    # sleep(5) # was only here to simulate a delay and see if the program still worked fine
     return {'boardState' : state, 'move' : [i, -1]}
 
 @app.route('/')

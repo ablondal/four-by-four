@@ -50,6 +50,9 @@ let frameBuff;
 // Last picked value
 let lastVal;
 
+// Store past state, for comparison
+let lastRenderState;
+
 function initRender(){
     canvas = document.getElementById("gl-canvas");
     gl = WebGLUtils.setupWebGL(canvas);
@@ -279,32 +282,36 @@ function initRender(){
         // console.log(vertices, normals, colors, indices);
         console.log(pickColors);
     }
-    // Create perspective matrix
 
-    fieldOfView = 45.0 * Math.PI / 180.0;
-    const aspect = (gl.canvas.clientWidth) / gl.canvas.clientHeight;
-    const zNear = 0.1;
-    const zFar = 100.0;
-    projectionMatrix = glMatrix.mat4.create();
+    // Make matrices for constant transformations
+    {
+        // Create perspective matrix
 
-    glMatrix.mat4.perspective(
-        projectionMatrix,
-        fieldOfView,
-        aspect,
-        zNear,
-        zFar
-    );
+        fieldOfView = 45.0 * Math.PI / 180.0;
+        const aspect = (gl.canvas.clientWidth) / gl.canvas.clientHeight;
+        const zNear = 0.1;
+        const zFar = 100.0;
+        projectionMatrix = glMatrix.mat4.create();
 
-    pickingProjectionMatrix = glMatrix.mat4.create();
+        glMatrix.mat4.perspective(
+            projectionMatrix,
+            fieldOfView,
+            aspect,
+            zNear,
+            zFar
+        );
 
-    glMatrix.mat4.perspective(
-        pickingProjectionMatrix,
-        // fieldOfView,
-        fieldOfView*(30/(gl.canvas.clientWidth)),
-        1,
-        zNear,
-        zFar
-    )
+        pickingProjectionMatrix = glMatrix.mat4.create();
+
+        glMatrix.mat4.perspective(
+            pickingProjectionMatrix,
+            // fieldOfView,
+            fieldOfView*(30/(gl.canvas.clientWidth)),
+            1,
+            zNear,
+            zFar
+        )
+    }
 
     // Set up Picking texture
     // Make texture
@@ -443,6 +450,14 @@ function initRender(){
 
     // Set starting last value
     lastVal = 0;
+
+    lastRenderState = {
+        mouseX: -1,
+        mouseY: -1,
+        rotx: 0,
+        roty: 0,
+        turn: 0
+    };
 }
 
 function beginRendering(){
@@ -468,6 +483,33 @@ function render(now) {
 
         const [roty, rotx] = getrot();
     }
+
+    // Check if the state has changed at all
+    const currRenderState = {
+        mouseX: mouseX,
+        mouseY: mouseY,
+        rotx: rotx,
+        roty: roty,
+        turn: game.turn
+    };
+
+    // console.log(currRenderState, lastRenderState);
+
+    var eq = true;
+    for (key of ['mouseX', 'mouseY', 'rotx', 'roty', 'turn']) {
+        if (currRenderState[key] != lastRenderState[key]) {
+            // console.log(currRenderState[key], lastRenderState[key])
+            eq = false;
+            break;
+        }
+    }
+    if (eq) {
+        return; // Don't render if there's no point
+    }
+
+    lastRenderState = currRenderState;
+
+    // console.log('rendering...');
     
     // Draw
 
