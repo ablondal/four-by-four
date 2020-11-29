@@ -3,6 +3,11 @@
     <head>
         <title>Quad-Tac-Toe</title>
 
+        <!--Import bootstrap-->
+        <link rel="stylesheet" href="https://bootswatch.com/4/lux/bootstrap.css" crossorigin="anonymous">
+        <meta charset="utf-8"/>
+        <!--Import css-->
+        <link rel="stylesheet" type="text/css" href="style.css">
         <!-- Vertex shader script -->
         <script id="vertex-shader" type="x-shader/x-vertex">
             // Vertex Shaders require a position input/"attribute"
@@ -105,22 +110,45 @@
         <script type="text/javascript" src="/static/src/rendering.js"></script>
         <script type="text/javascript" src="/static/src/controls.js"></script>
 
-        <link rel="stylesheet" href="/static/src/main.css">
+        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='main.css') }}">
+
     </head>
 
     <body>
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Tic Tac Toe 3D</a>
+        </nav>
+
+        <!-- Top text -->
+         <div class="jumbotron text-center">
+            <h1>3D Tic Tac Toe</h1>
+            <p>Ari James Haohui Tu</p> 
+         </div>
+
+        <div class="Rule">
+            <p>The first player to achieve four of their own markers in a row wins</p> 
+            <p>The winning row can be horizontal, vertical, or diagonal on a single board </p>
+            <p>or vertically in a column, or a diagonal line through four boards</p>
+        </div>
+            
         <!-- Draw the canvas. This is what WebGL will render to -->
-        <canvas id="gl-canvas" width="512" height="512">
-            Oops ... Sorry, your browser doesn't support HTML5 canvas :(
-        </canvas><br>
-        <span>
-            Enter the index of the cube to change, then press the button
-        </span><br>
-        <input type="radio" id="red" name="color" value="red" checked="checked">
-        <label for="red">Red</label><br>
-        <input type="radio" id="blue" name="color" value="blue">
-        <label for="blue">Blue</label><br>
-        <input type="number" id="numchange">
-        <button id="changebutton">Color</button>
+        <div class="canvas">
+            <canvas id="gl-canvas" width="512" height="512">
+                Oops ... Sorry, your browser doesn't support HTML5 canvas :(
+            </canvas>
+        </div>
+
+        <div class="changeColour">
+            <li>
+                Enter the index of the cube to change, then press the button
+            </li><br>
+            <input type="radio" id="red" name="color" value="red" checked="checked">
+            <label for="red">Red</label><br>
+            <input type="radio" id="blue" name="color" value="blue">
+            <label for="blue">Blue</label><br>
+            <input type="number" id="numchange">
+            <button id="changebutton">Color</button>
+        </div>
     </body>
 </html>
