@@ -110,7 +110,18 @@
         <script type="text/javascript" src="/static/src/rendering.js"></script>
         <script type="text/javascript" src="/static/src/controls.js"></script>
         <script type="text/javascript" src="/static/src/game.js"></script>
+        <script>
+            function closeWindow(){
+                document.getElementById('winningMessage').style.display = "none"
+            }
+        </script>
 
+        <script>
+            function restartGame(){
+                document.location.reload();
+                clearInterval(interval); // Needed for Chrome to end game
+            }
+        </script>
         <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='main.css') }}">
 
     </head>
@@ -150,6 +161,14 @@
             <label for="blue">Blue</label><br>
             <input type="number" id="numchange">
             <button id="changebutton">Color</button>
-        </div>
+            <button id="restartButton" onclick="restartGame()">Restart</button>
+
+            <div class="winning-message" id="winningMessage"> 
+                <div data-winning-message-text></div>
+                <div id="container">
+                    <button id="restartButton" onclick="restartGame()">Restart</button>
+                    <button id="closeButton" onclick="closeWindow()">Close</button>
+                </div>
+              </div>
     </body>
 </html>
