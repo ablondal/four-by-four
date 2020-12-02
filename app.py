@@ -85,13 +85,12 @@ def make_move():
             i = bestPos
             break;
     
-    if winState == 1: # Win handling, display calls for winning should be put here
-        print("Game Declares The Player Has Won")
-    if winState == -1:
-        print("Gamer Declares The Player Has Lost")
 
     state[i] = -1 # This should be the only place where state[i] is updated
-
+    if winState == 1: # Win handling, display calls for winning should be put here
+        return {'boardState' : state, 'move' : [i, -1],'message': "You Won"}
+    if winState == -1:
+        return {'boardState' : state, 'move' : [i, -1],'message': "You Lost"}
     # sleep(5) # was only here to simulate a delay and see if the program still worked fine
     return {'boardState' : state, 'move' : [i, -1]}
 

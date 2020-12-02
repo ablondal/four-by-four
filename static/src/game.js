@@ -32,6 +32,10 @@ function takeTurn(index) {
                 if (response.move[0]<64) {
                     changeColor(response.move[0], response.move[1]);
                 }
+                if (response.message){
+                    document.querySelector('[data-winning-message-text]').innerText = response.message
+                    document.getElementById('winningMessage').classList.add('show')
+                }
             });
         }
     }
