@@ -87,7 +87,7 @@ def make_move():
     
     if winState == 1: # Win handling, display calls for winning should be put here
         print("Game Declares The Player Has Won")
-    if winState == 0:
+    if winState == -1:
         print("Gamer Declares The Player Has Lost")
 
     state[i] = -1 # This should be the only place where state[i] is updated
