@@ -61,4 +61,7 @@ body{
   display: flex;
 }
 
+#container{
+  text-align: center;
+}
 

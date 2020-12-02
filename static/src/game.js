@@ -35,6 +35,7 @@ function takeTurn(index) {
                 if (response.message){
                     document.querySelector('[data-winning-message-text]').innerText = response.message
                     document.getElementById('winningMessage').classList.add('show')
+                    game.turn = -1
                 }
             });
         }
