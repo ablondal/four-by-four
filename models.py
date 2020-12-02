@@ -28,3 +28,13 @@ def getGame(getID):
         return game
     else:
         return None
+
+def newGame():
+    newgame = Game(1)
+    print(newgame)
+    db.session.add(newgame)
+
+    db.session.commit()
+    return newgame
+    # games = Game.query.all()
+    # print("\n".join(g.__repr__() for g in games))

@@ -99,13 +99,6 @@ def make_move():
 
 @app.route('/')
 def index():
-    newgame = Game(1)
-    print(newgame)
-    db.session.add(newgame)
-
-    db.session.commit()
-    games = Game.query.all()
-    print("\n".join(g.__repr__() for g in games))
     return render_template("main.html")
 
 if __name__ == "__main__":
