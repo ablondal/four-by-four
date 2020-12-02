@@ -122,6 +122,12 @@
                 clearInterval(interval); // Needed for Chrome to end game
             }
         </script>
+
+        <script>
+            function togglePopup(){
+                document.getElementById("popup-1").classList.toggle("active");
+            }
+        </script>
         <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='main.css') }}">
 
     </head>
@@ -136,6 +142,7 @@
          <div class="jumbotron text-center">
             <h1>3D Tic Tac Toe</h1>
             <p>Ari James Haohui Tu</p> 
+            <button onclick="togglePopup()">Read more</button>
          </div>
 
         <div class="Rule">
@@ -152,15 +159,10 @@
         </div>
 
         <div class="changeColour">
-            <li>
-                Enter the index of the cube to change, then press the button
-            </li><br>
-            <input type="radio" id="red" name="color" value="red" checked="checked">
-            <label for="red">Red</label><br>
-            <input type="radio" id="blue" name="color" value="blue">
-            <label for="blue">Blue</label><br>
-            <input type="number" id="numchange">
-            <button id="changebutton">Color</button>
+            <div class="hidden">
+                <input type="number" id="numchange">
+                <button id="changebutton">Color</button>
+            </div>
             <button id="restartButton" onclick="restartGame()">Restart</button>
 
             <div class="winning-message" id="winningMessage"> 
@@ -169,6 +171,29 @@
                     <button id="restartButton" onclick="restartGame()">Restart</button>
                     <button id="closeButton" onclick="closeWindow()">Close</button>
                 </div>
-              </div>
+            </div>
+        </div>
+
+        <div class="popup" id="popup-1">
+            <div class="overlay"></div>
+            <div class="content">
+              <div class="close-btn" onclick="togglePopup()">&times;</div>
+              <h1>More information </h1>
+              <img  class="animated-gif" src="{{url_for('static', filename='COMB.gif')}}" />
+              <p>A combinatorial line is given by a root. A root is a coordinate where at least one of the dimensions is replaced by a free character, in this case the character *. 
+                To generate a line, the character * is replaced with the possible values of a coordinate; in this case, iterating through [1, 2, 3]. 
+                This creates a line of coordinates, which is also always what would be a valid Tic-Tac-Toe win. However, not every valid Tic-Tac-Toe win is a combinatorial line. 
+                The Hales-Jewett Theorem implies that for a high enough dimensional grid, a combinatorial line must exist. This then implies that on a Tic-Tac-Toe board of that
+                dimension, a tie-game is not possible.
+             </p>
+              <img  class="animated-gif" src="{{url_for('static', filename='VDW.gif')}}" />
+
+              <p>By matching a colouring of a grid to a colouring of the natural numbers, a monochromatic combinatorial line will provide a monochromatic arithmetic progression.
+                Multiple colouring schemes can work, but summing the coordinates of each point in the grid and assigning corresponding colour is a simple method. Since the 
+                Hales-Jewett theorem guarantees that a high enough dimensional grid must contain a monochromatic combinatorial line, this shows that the Hales-Jewett theorem 
+                implies van der Waerden's theorem, guaranteeing us a monochromatic arithmetic progression.</p>
+            </div>
+          </div>
+          
     </body>
 </html>
