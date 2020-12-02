@@ -21,3 +21,10 @@ class Game(db.Model):
         return '<id {}, turn {}, p1id {}, p2id {}\n{}\nlast edit {}>'.format(
             self.id,self.turn,self.p1id,self.p2id,self.boardState,self.lastEdit
         )
+
+def getGame(getID):
+    game = Game.query.filter_by(id=getID).first()
+    if game:
+        return game
+    else:
+        return None
