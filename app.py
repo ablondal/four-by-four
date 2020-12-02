@@ -24,57 +24,57 @@ def make_move():
     for k in range(0,16):
         newStart = 4*k # X rows
         newDifference = 1
-        bestStart , bestDifference , bestRank = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
+        bestStart , bestDifference , bestRank , winState = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
 
         newStart = k # Z rows
         newDifference = 16 
-        bestStart , bestDifference , bestRank = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
+        bestStart , bestDifference , bestRank , winState = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
 
     for k in range(0,4):
         for j in range(0,4):
             newStart = 16*j + k # Y Rows
             newDifference = 4
-            bestStart , bestDifference , bestRank = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
+            bestStart , bestDifference , bestRank , winState = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
         
         newStart = 16*k # XY Diagonals
         newDifference = 5
-        bestStart , bestDifference , bestRank = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
+        bestStart , bestDifference , bestRank , winState = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
 
         newStart = 16*k + 3
         newDifference = 3
-        bestStart , bestDifference , bestRank = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
+        bestStart , bestDifference , bestRank , winState = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
 
         newStart = 4*k # XZ Diagonals
         newDifference = 17
-        bestStart , bestDifference , bestRank = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
+        bestStart , bestDifference , bestRank , winState = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
         
         newStart = 4*k + 3
         newDifference = 15
-        bestStart , bestDifference , bestRank = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
+        bestStart , bestDifference , bestRank , winState = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
 
         newStart = k # XY Diagonals
         newDifference = 20
-        bestStart , bestDifference , bestRank = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
+        bestStart , bestDifference , bestRank , winState = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
 
         newStart = k + 12
         newDifference = 12
-        bestStart , bestDifference , bestRank = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
+        bestStart , bestDifference , bestRank , winState = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
 
     newStart = 0 # Space Diagonals
     newDifference = 21
-    bestStart , bestDifference , bestRank = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
+    bestStart , bestDifference , bestRank , winState = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
 
     newStart = 15
     newDifference = 11
-    bestStart , bestDifference , bestRank = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
+    bestStart , bestDifference , bestRank , winState = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
 
     newStart = 3
     newDifference = 19
-    bestStart , bestDifference , bestRank = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
+    bestStart , bestDifference , bestRank , winState = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
 
     newStart = 12
     newDifference = 13
-    bestStart , bestDifference , bestRank = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
+    bestStart , bestDifference , bestRank, winState = evaluate_line(newStart,newDifference,bestStart, bestDifference, bestRank, state, winState)
 
     print(bestRank)
     for k in range(0,4): # Determines a valid poistion to play in the best line. If no best line can be found, the program will revert to
@@ -127,6 +127,6 @@ def evaluate_line(startIndex, commonDifference,bestStart,bestDifference,bestRank
             #print("loser")
 
     if rank > bestRank:
-        return startIndex , commonDifference , rank
+        return startIndex , commonDifference , rank , winState
     else:
-        return bestStart , bestDifference , bestRank
+        return bestStart , bestDifference , bestRank , winState
