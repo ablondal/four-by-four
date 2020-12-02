@@ -1,20 +1,19 @@
 from flask import Flask, escape, request, render_template, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+# from flask_heroku import Heroku
 from time import sleep
+from config import Config
 
 app = Flask(__name__,
     static_folder='static/')
 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-dp = SQLAlchemy(app)
+app.config.from_object(Config)
+# heroku = Heroku(app)
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
-class Dataentry(db.Model):
-    __tablename__ = "games"
-    id = db.Column(db.Integer, primary_key=True) # Game id
-    turn = db.Column(db.SmallInteger) # 1 for red, 2 for blue
-    boardState = db.Column(db.String(64))
-
-
+from models import Game
 
 @app.route('/make_move', methods=['POST'])
 def make_move():
@@ -94,15 +93,23 @@ def make_move():
             print(i)
             state[i] == -1
             break;
-    
+
     # sleep(5) # was only here to simulate a delay and see if the program still worked fine
     return {'boardState' : state, 'move' : [i, -1]}
 
 @app.route('/')
 def index():
+    newgame = Game(1)
+    print(newgame)
+    db.session.add(newgame)
+
+    db.session.commit()
+    games = Game.query.all()
+    print("\n".join(g.__repr__() for g in games))
     return render_template("main.html")
 
 if __name__ == "__main__":
+    app.debug = True
     app.run()
 
 def evaluate_line(startIndex, commonDifference,bestStart,bestDifference,bestRank,state):
