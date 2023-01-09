@@ -135,13 +135,13 @@
     <body>
 
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="#">Tic Tac Toe 3D</a>
+            <a class="navbar-brand" href="#">Quad-Tac-Toe</a>
         </nav>
 
         <!-- Top text -->
          <div class="jumbotron text-center">
-            <h1>3D Tic Tac Toe</h1>
-            <p>Ari James Haohui Tu</p> 
+            <h1>Quad-Tac-Toe</h1>
+            <p>A Game by Ari, James, Haohui, and Tu</p> 
             <button onclick="togglePopup()">Read more</button>
          </div>
 
@@ -179,14 +179,14 @@
             <div class="content">
               <div class="close-btn" onclick="togglePopup()">&times;</div>
               <h1>More information </h1>
-              <img  class="animated-gif" src="{{url_for('static', filename='COMB.gif')}}" />
+              <img  class="animated-gif" src="/static/COMB.gif" />
               <p>A combinatorial line is given by a root. A root is a coordinate where at least one of the dimensions is replaced by a free character, in this case the character *. 
                 To generate a line, the character * is replaced with the possible values of a coordinate; in this case, iterating through [1, 2, 3]. 
                 This creates a line of coordinates, which is also always what would be a valid Tic-Tac-Toe win. However, not every valid Tic-Tac-Toe win is a combinatorial line. 
                 The Hales-Jewett Theorem implies that for a high enough dimensional grid, a combinatorial line must exist. This then implies that on a Tic-Tac-Toe board of that
                 dimension, a tie-game is not possible.
              </p>
-              <img  class="animated-gif" src="{{url_for('static', filename='VDW.gif')}}" />
+              <img  class="animated-gif" src="/static/VDW.gif" />
 
               <p>By matching a colouring of a grid to a colouring of the natural numbers, a monochromatic combinatorial line will provide a monochromatic arithmetic progression.
                 Multiple colouring schemes can work, but summing the coordinates of each point in the grid and assigning corresponding colour is a simple method. Since the 
