@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="https://bootswatch.com/4/lux/bootstrap.css" crossorigin="anonymous">
         <meta charset="utf-8"/>
         <!--Import css-->
-        <link rel="stylesheet" type="text/css" href="/static/main.css">
+        <link rel="stylesheet" type="text/css" href="static/main.css">
         <!-- Vertex shader script -->
         <script id="vertex-shader" type="x-shader/x-vertex">
             // Vertex Shaders require a position input/"attribute"
@@ -103,13 +103,13 @@
             }
         </script>
 
-        <script type="text/javascript" src="/static/src/App.js"></script>
-        <script type="text/javascript" src="/static/util/webgl-utils.js"></script>
-        <script type="text/javascript" src="/static/util/shader-utils.js"></script>
-        <script type="text/javascript" src="/static/util/gl-matrix-min.js"></script>
-        <script type="text/javascript" src="/static/src/rendering.js"></script>
-        <script type="text/javascript" src="/static/src/controls.js"></script>
-        <script type="text/javascript" src="/static/src/game.js"></script>
+        <script type="text/javascript" src="static/src/App.js"></script>
+        <script type="text/javascript" src="static/util/webgl-utils.js"></script>
+        <script type="text/javascript" src="static/util/shader-utils.js"></script>
+        <script type="text/javascript" src="static/util/gl-matrix-min.js"></script>
+        <script type="text/javascript" src="static/src/rendering.js"></script>
+        <script type="text/javascript" src="static/src/controls.js"></script>
+        <script type="text/javascript" src="static/src/game.js"></script>
         <script>
             function closeWindow(){
                 document.getElementById('winningMessage').style.display = "none"
@@ -128,7 +128,7 @@
                 document.getElementById("popup-1").classList.toggle("active");
             }
         </script>
-        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='main.css') }}">
+        <!-- <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='main.css') }}"> -->
 
     </head>
 
@@ -179,14 +179,14 @@
             <div class="content">
               <div class="close-btn" onclick="togglePopup()">&times;</div>
               <h1>More information </h1>
-              <img  class="animated-gif" src="/static/COMB.gif" />
+              <img  class="animated-gif" src="static/COMB.gif" />
               <p>A combinatorial line is given by a root. A root is a coordinate where at least one of the dimensions is replaced by a free character, in this case the character *. 
                 To generate a line, the character * is replaced with the possible values of a coordinate; in this case, iterating through [1, 2, 3]. 
                 This creates a line of coordinates, which is also always what would be a valid Tic-Tac-Toe win. However, not every valid Tic-Tac-Toe win is a combinatorial line. 
                 The Hales-Jewett Theorem implies that for a high enough dimensional grid, a combinatorial line must exist. This then implies that on a Tic-Tac-Toe board of that
                 dimension, a tie-game is not possible.
              </p>
-              <img  class="animated-gif" src="/static/VDW.gif" />
+              <img  class="animated-gif" src="static/VDW.gif" />
 
               <p>By matching a colouring of a grid to a colouring of the natural numbers, a monochromatic combinatorial line will provide a monochromatic arithmetic progression.
                 Multiple colouring schemes can work, but summing the coordinates of each point in the grid and assigning corresponding colour is a simple method. Since the 
