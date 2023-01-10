@@ -15,7 +15,7 @@ body{
 .hidden{
   visibility: hidden;
 }
-.changeColour{
+.buttonBar{
   margin: auto;
   align-items: center;
   text-align: center;

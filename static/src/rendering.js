@@ -55,10 +55,27 @@ let lastRenderState;
 
 function initRender(){
     canvas = document.getElementById("gl-canvas");
+
+    // Set display size in CSS pixels:
+    canvas.style.width = canvas.width + "px"
+    canvas.style.height = canvas.height + "px";
+
+    // Changes for High-DPI screens:
+    var devicePixelRatio = window.devicePixelRatio || 1;
+    console.log(devicePixelRatio);
+
+    // set the size of the drawingBuffer based on the size it's displayed.
+    canvas.width = canvas.clientWidth * devicePixelRatio;
+    canvas.height = canvas.clientHeight * devicePixelRatio;
+
     gl = WebGLUtils.setupWebGL(canvas);
     if (!gl) {
         alert("WebGL isn't available");
     }
+
+    // var gl = canvas.getContext("webgl");
+
+
 
     // Add mouse listener
     gl.canvas.addEventListener('mousemove', (e) => {
@@ -603,7 +620,7 @@ function render(now) {
     // Render normally
     gl.useProgram(program);
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    gl.viewport(0,0,canvas.clientWidth,canvas.clientHeight);
+    gl.viewport(0,0,canvas.width,canvas.height);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     
     // set shader uniforms

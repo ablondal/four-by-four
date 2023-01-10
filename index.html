@@ -124,8 +124,8 @@
         </script>
 
         <script>
-            function togglePopup(){
-                document.getElementById("popup-1").classList.toggle("active");
+            function togglePopup(id){
+                document.getElementById(id).classList.toggle("active");
             }
         </script>
         <!-- <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='main.css') }}"> -->
@@ -136,20 +136,21 @@
 
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="navbar-brand" href="#">Quad-Tac-Toe</a>
+            <p>A Mathematical Game by Ari, James, Haohui, and Tu</p> 
         </nav>
 
         <!-- Top text -->
-         <div class="jumbotron text-center">
+         <!-- <div class="jumbotron text-center">
             <h1>Quad-Tac-Toe</h1>
             <p>A Game by Ari, James, Haohui, and Tu</p> 
             <button onclick="togglePopup()">Read more</button>
-         </div>
+         </div> -->
 
-        <div class="Rule">
+        <!-- <div class="Rule">
             <p>The first player to achieve four of their own markers in a row wins</p> 
             <p>The winning row can be horizontal, vertical, or diagonal on a single board </p>
             <p>or vertically in a column, or a diagonal line through four boards</p>
-        </div>
+        </div> -->
             
         <!-- Draw the canvas. This is what WebGL will render to -->
         <div class="canvas">
@@ -158,12 +159,14 @@
             </canvas>
         </div>
 
-        <div class="changeColour">
+        <div class="buttonBar">
             <div class="hidden">
                 <input type="number" id="numchange">
                 <button id="changebutton">Color</button>
             </div>
+            <button onclick="togglePopup('popup-how-to-play')" style="font-size:25px;">How to Play</button>
             <button id="restartButton" onclick="restartGame()" style="font-size:25px;">Restart</button>
+            <button onclick="togglePopup('popup-more-math')" style="font-size:25px;">Read more</button>
 
             <div class="winning-message" id="winningMessage"> 
                 <div data-winning-message-text></div>
@@ -174,10 +177,24 @@
             </div>
         </div>
 
-        <div class="popup" id="popup-1">
+        <div class="popup" id="popup-how-to-play">
             <div class="overlay"></div>
             <div class="content">
-              <div class="close-btn" onclick="togglePopup()">&times;</div>
+              <div class="close-btn" onclick="togglePopup('popup-how-to-play')">&times;</div>
+              <h1>How to Win</h1>
+              <p>The goal of this game is to be the first player to get four in a row of their own cube colour!</p>
+              <p>The four in a row can be horizontal, vertical, or diagonal in any orientation.</p>
+              <p>Players take turns choosing an uncolored cube to make their own colour.</p>
+              <h1>Controls</h1>
+              <p>The board can be rotated using the arrow keys, or by using the WASD keys.</p>
+              <p>If it is your turn, you can click on a cube to turn it your colour!</p>
+            </div>
+        </div>
+
+        <div class="popup" id="popup-more-math">
+            <div class="overlay"></div>
+            <div class="content">
+              <div class="close-btn" onclick="togglePopup('popup-more-math')">&times;</div>
               <h1>More information </h1>
               <img  class="animated-gif" src="static/COMB.gif" />
               <p>A combinatorial line is given by a root. A root is a coordinate where at least one of the dimensions is replaced by a free character, in this case the character *. 
@@ -193,7 +210,7 @@
                 Hales-Jewett theorem guarantees that a high enough dimensional grid must contain a monochromatic combinatorial line, this shows that the Hales-Jewett theorem 
                 implies van der Waerden's theorem, guaranteeing us a monochromatic arithmetic progression.</p>
             </div>
-          </div>
+        </div>
           
     </body>
 </html>
