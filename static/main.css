@@ -9,7 +9,7 @@ canvas {
 }
 
 body{
-  background-color: #2f4250;
+  background-color: #5b7e97;
 }
 
 .hidden{
@@ -20,7 +20,7 @@ body{
   align-items: center;
   text-align: center;
   color: DarkGray;
-  background-color:#2f4250;
+  /* background-color:#2f4250; */
   margin-bottom: 20px;
 }
 

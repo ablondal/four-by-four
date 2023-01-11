@@ -75,7 +75,7 @@ function handleButtonPress(){
 
     // var col = document.querySelector('input[name="color"]:checked').value;
 
-    var col = (document.getElementById("red").checked ? 1 : 0)
+    var col = (document.getElementById("red").checked ? "red" : "blue")
     if (val < 64 && val >= 0){
         changeColor(val, col);
         picker.value = (val + 1.0) % 64;

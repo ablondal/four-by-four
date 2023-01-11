@@ -53,18 +53,20 @@ let lastVal;
 // Store past state, for comparison
 let lastRenderState;
 
+// frustum values
+let frustum;
+
 function initRender(){
+    // This just sets up the whole rendering machine!
+    // It's a complicated one, full of WebGL and Matrix Math
     canvas = document.getElementById("gl-canvas");
 
     // Set display size in CSS pixels:
-    canvas.style.width = canvas.width + "px"
+    canvas.style.width = canvas.width + "px";
     canvas.style.height = canvas.height + "px";
 
     // Changes for High-DPI screens:
     var devicePixelRatio = window.devicePixelRatio || 1;
-    console.log(devicePixelRatio);
-
-    // set the size of the drawingBuffer based on the size it's displayed.
     canvas.width = canvas.clientWidth * devicePixelRatio;
     canvas.height = canvas.clientHeight * devicePixelRatio;
 
@@ -73,17 +75,12 @@ function initRender(){
         alert("WebGL isn't available");
     }
 
-    // var gl = canvas.getContext("webgl");
-
-
-
     // Add mouse listener
     gl.canvas.addEventListener('mousemove', (e) => {
         const rect = canvas.getBoundingClientRect();
-        mouseX = e.clientX - rect.left+1;
-        mouseY = e.clientY - rect.top+1;
-        // console.log(mouseX, mouseY)
-        // console.log(rect)
+        // Rounding is because of non-integer client bounding boxes
+        mouseX = Math.round(e.clientX - rect.left);
+        mouseY = Math.round(e.clientY - rect.top);
     });
 
     // Add click listener
@@ -92,7 +89,6 @@ function initRender(){
     });
 
     // Optimize gl-matrix for modern web browsers
-    // glMatrix.setMatrixArrayType(Array);
 
     // Configure WebGL
 
@@ -101,8 +97,9 @@ function initRender(){
 
     // Depth stuff for 3d rendering
     gl.clearDepth(1.0);
-    gl.enable(gl.DEPTH_TEST);
-    gl.depthFunc(gl.LEQUAL);
+    gl.enable(gl.DEPTH_TEST); // Closer objects are drawn over farther away ones
+    gl.enable(gl.CULL_FACE); // Faces facing away from the camera aren't drawn
+    gl.depthFunc(gl.LEQUAL); // Pass if the new depth is less or equal to existing depth
 
     // Load shaders and initialize attribute buffers
     {
@@ -136,6 +133,7 @@ function initRender(){
         gl.attachShader(pick_program, pvShader);
         gl.attachShader(pick_program, pfShader);
 
+        // Set hardware locations for the variables passed into each shader
         gl.bindAttribLocation(program, 0, 'vPosition');
         gl.bindAttribLocation(program, 1, 'vColor');
         gl.bindAttribLocation(program, 2, 'vNormal');
@@ -146,6 +144,7 @@ function initRender(){
         gl.linkProgram(program);
         gl.linkProgram(pick_program);
 
+        // Make sure linking succeeded
         if (!gl.getProgramParameter(program, gl.LINK_STATUS) || !gl.getProgramParameter(pick_program, gl.LINK_STATUS)){
             alert("Shader Program linking failed.");
             console.log(gl.getProgramInfoLog(program), gl.getProgramInfoLog(pick_program));
@@ -153,11 +152,12 @@ function initRender(){
         }
     }
 
+    // Default program is for drawing. We'll change it to picking later.
     gl.useProgram(program);
 
     // Set up draw data
     {
-        // Draw a cube!
+        // Draw a cube! Here are the vertices of each of its faces!
         const s_vertices = [
             // Front face
             -1.0, -1.0,  1.0,
@@ -195,8 +195,8 @@ function initRender(){
             -1.0,  1.0,  1.0,
             -1.0,  1.0, -1.0,
         ];
-        // s_vertices = s_vertices.map(x => 0.1*x);
 
+        // The corresponding face normals
         const s_normals = [
             0,0,1,
             0,0,1,
@@ -226,6 +226,7 @@ function initRender(){
 
         const s_pick_lum = Array(24).fill(0);
 
+        // These will define the colours of each of the cube vertices.
         col = {
             red: [],
             blue: [],
@@ -239,19 +240,19 @@ function initRender(){
             if (vtex[0] === vtex[1] && vtex[1] === vtex[2]){
                 col.red.push(1,0,0,1);
                 col.blue.push(0,0,1,1);
-                col.gray.push(0,0,0,1);
+                col.gray.push(0.3,0.3,0.3,1);
             }else if (vtex[0] === vtex[1]){
                 col.red.push(1,1,0,1);
                 col.blue.push(0,1,0,1);
                 col.gray.push(0.5,0.5,0.5,1);
             }else if (vtex[0] === vtex[2]){
-                col.red.push(1,1,1,1);
+                col.red.push(1,0,0,1);
                 col.blue.push(0,0,0,1);
                 col.gray.push(0.7,0.7,0.7,1);
             }else{
-                col.red.push(1,0.5,0,1);
+                col.red.push(1,0,1,1);
                 col.blue.push(0,1,1,1);
-                col.gray.push(1,1,1,1);
+                col.gray.push(0.5,0.5,0.5,1);
             }
 
             for (var j = 0; j < 3; ++j){
@@ -260,7 +261,7 @@ function initRender(){
             }
             s_colors.push(1.0);
         }
-        console.log(s_colors, col.red, col.blue);
+        col["lred"] = col.red.map((x, i) => (col.gray[i]*0.7 + x*0.3) );
 
         // Make element array
         const s_indices = [
@@ -296,14 +297,13 @@ function initRender(){
             i: indices,
             p: pickColors
         };
-        // console.log(vertices, normals, colors, indices);
-        console.log(pickColors);
     }
 
     // Make matrices for constant transformations
     {
         // Create perspective matrix
-
+        // The way we'll render this is by making the world rotate, with our camera stable.
+        // This perspective matrix will simply clip the 3-D world to our 2D view.
         fieldOfView = 45.0 * Math.PI / 180.0;
         const aspect = (gl.canvas.clientWidth) / gl.canvas.clientHeight;
         const zNear = 0.1;
@@ -318,23 +318,32 @@ function initRender(){
             zFar
         );
 
-        pickingProjectionMatrix = glMatrix.mat4.create();
+        // compute the rectangle the near plane of our frustum covers
+        const top = Math.tan(fieldOfView * 0.5) * zNear;
+        const bottom = -top;
+        const left = aspect * bottom;
+        const right = aspect * top;
+        const width = Math.abs(right - left);
+        const height = Math.abs(top - bottom);
 
-        glMatrix.mat4.perspective(
-            pickingProjectionMatrix,
-            // fieldOfView,
-            fieldOfView*(30/(gl.canvas.clientWidth)),
-            1,
-            zNear,
-            zFar
-        )
+        frustum = {
+            l: left,
+            r: right,
+            b: bottom,
+            t: top,
+            w: width,
+            h: height,
+            zNear: zNear,
+            zFar: zFar
+        };
+        // We'll calculate this later, using the frustum to make a new one encapsulating only the pixel we're hovering over.
+        pickingProjectionMatrix = glMatrix.mat4.create();
     }
 
     // Set up Picking texture
     // Make texture
     pickTexture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, pickTexture);
-    
     {
         // define size and format of level 0
         const level = 0;
@@ -420,31 +429,26 @@ function initRender(){
         gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
         gl.vertexAttribPointer(vPosition, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(vPosition);
-        console.log(vPosition);
 
         // Same with "vColour"
         var vColor = gl.getAttribLocation(program, "vColor");
         gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
         gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(vColor);
-        console.log(vColor);
 
         // Same with "vNormal"
         var vNormal = gl.getAttribLocation(program, "vNormal");
         gl.bindBuffer(gl.ARRAY_BUFFER, normal_buffer);
         gl.vertexAttribPointer(vNormal, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(vNormal);
-        console.log(vNormal);
 
         var vPickPosition = gl.getAttribLocation(pick_program, "vPosition");
         gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
         gl.vertexAttribPointer(vPickPosition, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(vPickPosition);
-        console.log(vPickPosition);
 
         // Same with "vColour"
         var vPickColor = gl.getAttribLocation(pick_program, "vPickColor");
-        console.log(vPickColor);
         gl.bindBuffer(gl.ARRAY_BUFFER, lum_buffer);
         gl.vertexAttribPointer(vPickColor, 1, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(vPickColor);
@@ -454,7 +458,6 @@ function initRender(){
     {
         pickProjAddr = gl.getUniformLocation(pick_program, 'uProjectionMatrix');
         pickModViewAddr = gl.getUniformLocation(pick_program, 'uModelViewMatrix');
-        // console.log(pickProjAddr, pickModViewAddr);
 
         projMatAddr = gl.getUniformLocation(program, 'uProjectionMatrix');
         modViewMatAddr = gl.getUniformLocation(program, 'uModelViewMatrix');
@@ -463,6 +466,8 @@ function initRender(){
 
     // Set starting angle
     rotAngle = 0.0;
+
+    // Set starting last time
     then = 0.0;
 
     // Set starting last value
@@ -510,12 +515,10 @@ function render(now) {
         turn: game.turn
     };
 
-    // console.log(currRenderState, lastRenderState);
-
+    // We let the browser relax: Only render a frame if one is required.
     var eq = true;
     for (key of ['mouseX', 'mouseY', 'rotx', 'roty', 'turn']) {
         if (currRenderState[key] != lastRenderState[key]) {
-            // console.log(currRenderState[key], lastRenderState[key])
             eq = false;
             break;
         }
@@ -523,21 +526,19 @@ function render(now) {
     if (eq) {
         return; // Don't render if there's no point
     }
-
     lastRenderState = currRenderState;
-
-    // console.log('rendering...');
     
     // Draw
 
-    // Do matrix math
+    // Do some matrix math
     const modelViewMatrix = glMatrix.mat4.create();
-    const pickModelViewMatrix = glMatrix.mat4.create();
+    // This is similar to a "camera" matrix, but backwards
     const normalMatrix = glMatrix.mat4.create();
+    // Lets us calculate normals, so that lighting works nicely
     {
         // Set drawing position to "identity point"
         
-        // Move drawing position to where the triangle should be drawn
+        // Move drawing position to where the triangle should be drawn (forward 35 units)
         glMatrix.mat4.translate(
             modelViewMatrix,
             modelViewMatrix,
@@ -558,28 +559,30 @@ function render(now) {
             [0,1,0]
         )
 
-        // Get normal matrix
+        // Get normal matrix with the inverse transpose
         glMatrix.mat4.invert(normalMatrix, modelViewMatrix);
         glMatrix.mat4.transpose(normalMatrix, normalMatrix);
 
-        // Get PickView matrix
-        // Rotate by x and y axis
-        glMatrix.mat4.rotate(
-            pickModelViewMatrix,
-            pickModelViewMatrix,
-            1.024*(mouseX-256)*(fieldOfView/512.0),
-            [0,1,0]
+        // Construct the PickView Projection matrix
+        const left = frustum.l + frustum.w*(mouseX/canvas.clientWidth);
+        const right = left + frustum.w/canvas.clientWidth;
+        const top = frustum.t - frustum.h*(mouseY/canvas.clientHeight);
+        const bot = top - frustum.h/canvas.clientWidth;
+
+        // We'll project with this instead, which will render the area behind the single pixel
+        // at our mouse
+        glMatrix.mat4.frustum(
+            pickingProjectionMatrix,
+            left,
+            right,
+            bot,
+            top,
+            frustum.zNear,
+            frustum.zFar
         )
-        glMatrix.mat4.rotate(
-            pickModelViewMatrix,
-            pickModelViewMatrix,
-            1.024*(mouseY-256)*(fieldOfView/512.0),
-            [1,0,0]
-        )
-        glMatrix.mat4.multiply(pickModelViewMatrix, pickModelViewMatrix, modelViewMatrix);
     }
     
-    // Do picking
+    // Do picking, or find out which object the mouse is hovering over
     gl.useProgram(pick_program);
     gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuff);
     gl.viewport(0,0,1,1);
@@ -587,15 +590,13 @@ function render(now) {
 
     gl.uniformMatrix4fv(
         pickProjAddr,
-        // projMatAddr,
         false,
         pickingProjectionMatrix
     );
     gl.uniformMatrix4fv(
         pickModViewAddr,
-        // modViewMatAddr,
         false,
-        pickModelViewMatrix
+        modelViewMatrix
     )
     // Draw to the 1x1 texture
     gl.drawElements(gl.TRIANGLES, 36*64, gl.UNSIGNED_SHORT, 0);
@@ -611,8 +612,14 @@ function render(now) {
         gl.UNSIGNED_BYTE,  // type
         data);
     const val = data[0] / 2;
+
     if (val != lastVal){
-        console.log(val);
+        if (val < 64 && val >= 0 && game.boardState[val] === 0) {
+            changeColor(val, "lred")
+        }
+        if (lastVal < 64 && lastVal >= 0 && game.boardState[lastVal] === 0){
+            changeColor(lastVal, "gray")
+        }
         lastVal = val;
     }
 
@@ -665,20 +672,13 @@ function render(now) {
     // gl.drawElements(gl.TRIANGLES, 36*64, gl.UNSIGNED_SHORT, 0);
 }
 
-function changeColor(index, val){
+function changeColor(index, c){
 
     gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
-    if (val===1){
-        gl.bufferSubData(
-            gl.ARRAY_BUFFER,
-            index * 96 * 4,
-            new Float32Array(col.red));
-    } else {
-        gl.bufferSubData(
-            gl.ARRAY_BUFFER,
-            index * 96 * 4,
-            new Float32Array(col.blue));
-    }
+    gl.bufferSubData(
+        gl.ARRAY_BUFFER,
+        index * 96 * 4,
+        new Float32Array(col[c]));
 }
 
 function resetColors(){

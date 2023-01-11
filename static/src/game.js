@@ -23,14 +23,14 @@ function takeTurn(index) {
         if ( game.boardState[index] === 0 ) {
             // Move is valid and available
             game.boardState[index] = game.color;
-            changeColor(index, game.color);
+            changeColor(index, game.color===1 ? "red" : "blue");
             game.turn = 0;
             make_move().then((response) => {
                 console.log(response);
                 game.boardState = response.boardState.map(x => x);
                 game.turn = 1;
                 if (response.move[0]<64) {
-                    changeColor(response.move[0], response.move[1]);
+                    changeColor(response.move[0], response.move[1]===1 ? "red" : "blue" );
                 }
                 if (response.message){
                     document.querySelector('[data-winning-message-text]').innerText = response.message
