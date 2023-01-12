@@ -478,7 +478,7 @@ function initRender(){
         mouseY: -1,
         rotx: 0,
         roty: 0,
-        turn: 0
+        turn: -1
     };
 }
 
@@ -518,7 +518,7 @@ function render(now) {
     // We let the browser relax: Only render a frame if one is required.
     var eq = true;
     for (key of ['mouseX', 'mouseY', 'rotx', 'roty', 'turn']) {
-        if (currRenderState[key] != lastRenderState[key]) {
+        if (currRenderState[key] !== lastRenderState[key]) {
             eq = false;
             break;
         }

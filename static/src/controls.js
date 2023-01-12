@@ -83,5 +83,8 @@ function handleButtonPress(){
 }
 
 function clickSquare(val){
-    takeTurn(val);
+    // console.log(val);
+    if (val >= 0 && val < 64){
+        takeTurn(val, 0);
+    }
 }
