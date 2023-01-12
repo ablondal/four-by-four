@@ -13,7 +13,7 @@ var pickProjAddr, pickModViewAddr;
 var projectionMatrix;
 
 // Picking projection matrix
-var pickingProjectionMatrix
+var pickingProjectionMatrix;
 
 // Rotation angle
 var rotAngle;
@@ -52,6 +52,7 @@ let lastVal;
 
 // Store past state, for comparison
 let lastRenderState;
+let plsRender;
 
 // frustum values
 let frustum;
@@ -87,6 +88,9 @@ function initRender(){
     gl.canvas.addEventListener('click', (e) => {
         clickSquare(lastVal);
     });
+    
+    // Set up manual render override
+    plsRender = 0;
 
     // Optimize gl-matrix for modern web browsers
 
@@ -239,19 +243,19 @@ function initRender(){
             vtex = s_vertices.slice(3*i, 3*i+3);
             if (vtex[0] === vtex[1] && vtex[1] === vtex[2]){
                 col.red.push(1,0,0,1);
-                col.blue.push(0,0,1,1);
+                col.blue.push(0,0,0.6,1);
                 col.gray.push(0.3,0.3,0.3,1);
             }else if (vtex[0] === vtex[1]){
-                col.red.push(1,1,0,1);
-                col.blue.push(0,1,0,1);
+                col.red.push(1,0.5,0,1);
+                col.blue.push(0,0.3,0.3,1);
                 col.gray.push(0.5,0.5,0.5,1);
             }else if (vtex[0] === vtex[2]){
-                col.red.push(1,0,0,1);
-                col.blue.push(0,0,0,1);
+                col.red.push(1,0.5,0.5,1);
+                col.blue.push(0.3,0,0.3,1);
                 col.gray.push(0.7,0.7,0.7,1);
             }else{
-                col.red.push(1,0,1,1);
-                col.blue.push(0,1,1,1);
+                col.red.push(1,0,0.5,1);
+                col.blue.push(0,0,0.5,1);
                 col.gray.push(0.5,0.5,0.5,1);
             }
 
@@ -262,6 +266,7 @@ function initRender(){
             s_colors.push(1.0);
         }
         col["lred"] = col.red.map((x, i) => (col.gray[i]*0.7 + x*0.3) );
+        col["lblue"] = col.blue.map((x, i) => (col.gray[i]*0.7 + x*0.3) );
 
         // Make element array
         const s_indices = [
@@ -523,10 +528,11 @@ function render(now) {
             break;
         }
     }
-    if (eq) {
+    if (eq && !plsRender) {
         return; // Don't render if there's no point
     }
     lastRenderState = currRenderState;
+    plsRender = 0;
     
     // Draw
 
@@ -679,6 +685,7 @@ function changeColor(index, c){
         gl.ARRAY_BUFFER,
         index * 96 * 4,
         new Float32Array(col[c]));
+    plsRender = 1; // Pls render
 }
 
 function resetColors(){
@@ -691,4 +698,5 @@ function resetColors(){
         gl.ARRAY_BUFFER,
         new Float32Array(cols),
         gl.STATIC_DRAW);
+    plsRender = 1; // Pls render
 }

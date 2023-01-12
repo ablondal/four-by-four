@@ -4,6 +4,7 @@
 
 var game;
 var settings;
+var lines;
 
 function difficulty() {
     diffs = document.getElementsByName('difficulty')
@@ -30,6 +31,48 @@ function initGame() {
         playerTurn : parseInt(turnOrder())
     };
 
+    // Calculate lines
+    lines = [];
+    {
+        // Endpoint 1
+        for (var x = 0; x < 4; x++) {
+            for (var y = 0; y < 4; y++) {
+                for (var z = 0; z < 4; z++) {
+                    // Direction
+                    for (var dx = -1; dx < 2; dx++) {
+                        for (var dy = -1; dy < 2; dy++) {
+                            for (var dz = -1; dz < 2; dz++) {
+                                if (dx == 0 && dy == 0 && dz == 0) {
+                                    continue;
+                                }
+                                const fx = x + 3*dx;
+                                const fy = y + 3*dy;
+                                const fz = z + 3*dz;
+                                if ( 0 <= fx && fx < 4
+                                    && 0 <= fy && fy < 4
+                                    && 0 <= fz && fz < 4
+                                ) {
+                                    line = []
+                                    for (var i = 0; i < 4; i++) {
+                                        const nx = x + i*dx;
+                                        const ny = y + i*dy;
+                                        const nz = z + i*dz;
+                                        line.push(nx + ny*4 + nz*16);
+                                    }
+                                    line.sort()
+                                    lines.push(line);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // Get rid of duplicates
+        lines.sort();
+        lines = lines.filter((x, i) => i % 2);
+    }
+
     // Reset board to gray
     for (var i = 0; i < 64; i++) {
         game.boardState[i] = 0;
@@ -52,8 +95,16 @@ function takeTurn(index, player){
             game.boardState[index] = 1 - 2*player;
             changeColor(index, player ? "blue": "red");
             game.turn += 1;
+
+            let w = check_win(game.boardState);
+            if (w == 1) {
+                gameEnd('You Win!');
+            } else if (w == -1) {
+                gameEnd('You Lose...');
+            }
+
             if (player === 0) {
-                setTimeout(AI_take_move, 1000 );
+                setTimeout(AI_take_move, 1000);
             }
         }
     }
@@ -67,7 +118,6 @@ function gameEnd(result) {
 
 function AI_take_move() {
     mv = AI_get_move();
-    console.log(mv);
     takeTurn(mv.move[0], 1);
 }
 
