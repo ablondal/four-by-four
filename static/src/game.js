@@ -5,6 +5,7 @@
 var game;
 var settings;
 var lines;
+var i2l;
 
 function difficulty() {
     diffs = document.getElementsByName('difficulty')
@@ -73,6 +74,15 @@ function initGame() {
         lines = lines.filter((x, i) => i % 2);
     }
 
+    // Calculate the lines each index is in
+    i2l = []
+    while(i2l.length < 64) i2l.push([]);
+    for (var i=0; i<lines.length; i++){
+        for (var j=0; j<lines[i].length; j++){
+            i2l[lines[i][j]].push(i);
+        }
+    }
+
     // Reset board to gray
     for (var i = 0; i < 64; i++) {
         game.boardState[i] = 0;
@@ -126,8 +136,12 @@ function AI_get_move() {
     if (difficulty() == 0) {
         // random move
         return random_move(boardState)
-    } else {
+    } else if (difficulty() == 1) {
         return try_not_to_lose(boardState);
+    } else if (difficulty() == 2) {
+        return mediumAI(boardState);
+    } else {
+        return hardAI(boardState);
     }
 
 }
