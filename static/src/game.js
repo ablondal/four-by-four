@@ -118,12 +118,18 @@ function gameEnd(result) {
 
 function AI_take_move() {
     mv = AI_get_move();
-    takeTurn(mv.move[0], 1);
+    takeTurn(mv, 1);
 }
 
 function AI_get_move() {
     let boardState = game.boardState.map(x => x) // Shallow copy
-    return random_move(boardState)
+    if (difficulty() == 0) {
+        // random move
+        return random_move(boardState)
+    } else {
+        return try_not_to_lose(boardState);
+    }
+
 }
 
 // function takeTurn(index) {
